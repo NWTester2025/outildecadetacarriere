@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Outil de Traduction DeCadetÀCarrière</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #003366; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    select, input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; background-color: #003366; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0055a5; }
+  </style>
+</head>
+<body>
+  <h1>Outil de Traduction DeCadetÀCarrière</h1>
+  <label for="nom">Votre Nom:</label>
+  <input type="text" id="nom" placeholder="Entrez votre nom complet" />
+
+  <label for="Grades">Sélectionnez vos Grades:</label>
+  <select id="Grades" multiple></select>
+
+  <label for="cours">Sélectionnez vos cours (maintenez Ctrl/Cmnd pour en sélectionner plusieurs):</label>
+  <select id="cours" multiple></select>
+
+  <label for="qualifications">Sélectionnez vos qualifications (maintenez Ctrl/Cmnd pour en sélectionner plusieurs):</label>
+  <select id="qualifications" multiple></select>
+
+  <label for="prix">Sélectionnez vos prix (maintenez Ctrl/Cmnd pour en sélectionner plusieurs):</label>
+  <select id="prix" multiple></select>
+
+  <button onclick="generatePDF()">Télécharger le CV en PDF</button>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+
+    const data = {
+      grades: {
+       	"Cadet de l’air" : " En tant que cadet de l'Air, le cadet débute son parcours au sein du programme en acquérant des compétences fondamentales en leadership, en exercice militaire et en civisme. Ce grade marque le début d'une formation structurée et de la participation aux activités de l'escadron, favorisant la discipline et le travail d'équipe.", 
+" Cadet de l'air de première classe " : " Le grade de cadet de l'air de première classe est le deuxième grade du programme des cadets de l'air. Il reconnaît les progrès d'un cadet en formation et ses responsabilités croissantes. Les cadets de l’air de première classe aident les cadets subalternes et démontrent leur engagement envers les tâches de l'escadron, le développement du leadership et le service communautaire. ", 
+" Caporal" : " Caporal est un grade de sous-officier subalterne du Programme des cadets. Les cadets de ce niveau ont démontré un potentiel de leadership, ont terminé les phases d'instruction initiale et servent de modèles pour les cadets subalternes ", 
+" Caporal de section " : "  Le caporal de section est un grade de leadership intermédiaire dans le programme des cadets de l'Air. Les FCPL sont chargés d'aider aux tâches des petits partis, de participer à la formation et de servir de modèles en matière de discipline, de tenue vestimentaire et de comportement.  ", 
+" Sergent " : " Le sergent est un grade supérieur de cadets qui reflète un leadership solide, une capacité d'instruction et un engagement. Les sergents apprennent à diriger des séances d'instruction, à encadrer des cadets subalternes et à jouer un rôle clé dans les opérations de l'escadron et les tâches cérémonielles, en préparation de leur parcours de leadership ", 
+" Sergent de section " : " Le sergent de section est un grade de leadership de haut niveau au sein du programme des cadets de l'Air. Les sergents de section coordonnent l'entraînement, gèrent les équipes et soutiennent les officiers dans la planification et l'exécution des activités de l'escadron. Ils sont respectés pour leur expérience et leur professionnalisme. ", 
+" Adjudant de deuxième classe " : " Le grade d'adjudant de deuxième classe (Adjudant de deuxième classe) est un grade prestigieux décerné aux cadets qui ont fait preuve d'un leadership, de compétences pédagogiques et d'un dévouement exceptionnels. Les Adjudants de deuxième classe supervisent de grandes équipes, encadrent les chefs subalternes et contribuent à la planification stratégique de l'unité. ", 
+" Adjudant de première classe " : " L'adjudant de première classe (Adjudant de première classe) est le grade le plus élevé du programme des cadets de l'Air. Les Adjudants de première classe sont les chefs supérieurs des cadets, représentant l'escadron lors des événements, conseillant le personnel et garantissant des normes élevées dans toutes les activités des cadets. ", 
+" Cadet " : " Le grade de cadet est le grade d'entrée dans le programme des cadets de l'Armée. Les cadets commencent à apprendre les exercices de base, le leadership et les techniques d'expédition, et participent à des activités de service communautaire et de conditionnement physique dans le cadre de leur perfectionnement. ", 
+" Lance Caporal " : "Le lance caporal est un grade de leadership subalterne dans le programme des cadets de l'Armée. Les LCPL participent à la formation, travaillent en petits groupes et font preuve d'initiative et de responsabilité sur le terrain et en classe. . ", 
+"Caporal" : " Caporal est un grade de sous-officier subalterne du Programme des cadets. Les cadets de ce niveau ont démontré un potentiel de leadership, ont terminé les phases d'instruction initiale et servent de modèles pour les cadets subalternes ", 
+
+
+" Caporal Chef " : " Le caporal-chef  est un grade de commandement intermédiaire au sein du programme des cadets de l'Armée. Les caporals chef sont chargés d'encadrer les cadets subalternes, de diriger les exercices et de soutenir la planification et la mise en œuvre des programmes de formation. ", 
+"Sergent " : " Le sergent (SGT) est un grade supérieur de cadets qui reflète un leadership solide, une capacité pédagogique et un engagement. Les sergents apprennent à diriger des séances d'instruction, à encadrer des cadets subalternes et à jouer un rôle clé dans les opérations du corps et les tâches cérémonielles en préparation de leur parcours de direction. ", 
+" Adjudant " : " L'adjudant dans le programme des cadets de l'Armée est un grade de commandement supérieur. Les adjudants gèrent des équipes, coordonnent la formation et servent de conseillers clés aux officiers, démontrant ainsi des compétences avancées en leadership et en organisation. ", 
+" Adjudant-maître " : " L’adjudant-maître (adjum) est un grade de haut rang au sein du programme des cadets de l’Armée. Les adjum supervisent les principaux événements de formation, encadrent les chefs subalternes et assurent la discipline et le professionnalisme dans l’ensemble du corps. ", 
+" Adjudant-chef " : " L'adjudant-chef (adjuc) est le grade le plus élevé du programme des cadets de l'Armée. Les adjuc représentent le corps lors des fonctions officielles, dirigent les initiatives stratégiques et respectent les normes les plus élevées de leadership et de conduite. ", 
+" Matelot de 3e classe  " : "Matelot de 3e classe est le grade d'entrée dans le programme des cadets de la Marine. Les Matelots de 3e classe commencent leur formation en matelotage, en exercice militaire, en leadership et en service communautaire. ", 
+" Matelot de 2e classe " : " Matelot de 2e classe est le deuxième rang du programme des cadets de la Marine. Les Matelots de 2e classe ont terminé leur formation de base et commencent à participer à une formation intermédiaire en leadership et font preuve d'engagement envers la communauté. ", 
+" Matelot de 1e classe " : "Matelot de 1e classe est un grade de leadership subalterne dans le programme des cadets de la Marine. Les Matelots de 1e classe travaillent en petites équipes, participent à l'entraînement et démontrent de solides compétences en matelotage et en leadership.  ", 
+" Matelot Chef " : " Le grade de matelot chef est un grade de leadership de niveau intermédiaire dans le programme des cadets de la Marine. Les Matelots Chefs participent à l'instruction et servent de modèles en matière de discipline et de conduite navale. ", 
+" Maître de deuxième classe " : " Le maître de deuxième classe est un grade de haute direction dans le programme des cadets de la Marine. Les maîtres de deuxième classe participent à de petites équipes, apprennent à instruire et soutiennent les aînés dans la planification et l'exécution de la formation. ", 
+" Maître de première classe " : " Le grade de maître de première classe est un grade de leadership de haut niveau dans le programme des cadets de la Marine. Les maîtres de première classe supervisent les divisions, encadrent les cadets subalternes et garantissent des normes élevées dans tous les aspects de la vie des cadets. ", 
+" Premier maître de deuxième classe " : " Le grade de premier maître de deuxième classe est prestigieux au sein du programme des cadets de la Marine. Les premier maître de deuxième classe coordonnent les principaux événements de formation, représentent le corps et maintiennent les traditions navales et l'excellence en leadership. ", 
+" Premier maître de première classe " : " Le premier maître de première classe est le grade le plus élevé du programme des cadets de la Marine. Les premier maître de première classe servent de chefs de cadets supérieurs, conseillent les officiers, dirigent les initiatives du corps et incarnent les normes de conduite les plus élevées. ", 
+
+      },
+      cours: {
+  "Tir de précision – Introduction"  : " Les cadets acquièrent des compétences de base en matière de sécurité, de maniement et de techniques de tir à la carabine à air comprimé. Le cours met l'accent sur la discipline, la concentration et la précision tout en pratiquant et en promouvant des habitudes de tir sécuritaires. Les cadets commencent également à développer des compétences en leadership en encadrant des membres juniors. Les participants retenus obtiennent des qualifications de tir qui reconnaissent leurs compétences et leur sensibilisation à la sécurité.  ", 
+ 
+"Instructeur de tir de carabine à air comprimé" : " Ce cours avancé approfondit les connaissances des cadets en matière de tir de précision à la carabine à air comprimé et les protocoles de sécurité. Les cadets acquièrent des techniques d'instruction et d'encadrement pour enseigner efficacement aux autres tout en respectant des normes de sécurité rigoureuses. Ce cours améliore les compétences en communication, en leadership et en organisation, et sa réussite permet d'obtenir des qualifications de tir de précision de niveau supérieur. ", 
+ 
+"Exercice militaire et cérémonial – Introduction" : " Les cadets acquièrent des compétences en mouvements d'exercice militaire de base et en protocoles cérémoniaux, favorisant la discipline, le souci du détail et le travail d'équipe. Ce cours développe les compétences fondamentales en leadership et en instruction, utiles pour guider les cadets subalternes dans leurs fonctions de parade et de cérémonial. ", 
+ 
+"Instructeur d'exercice militaire et cérémonial" : " Les cadets reçoivent une formation avancée en exécution d'exercices militaires, en leadership cérémonial et en méthodes d'instruction. Ils développent leurs compétences en leadership, en présentation publique et en gestion d'événements, ce qui leur permet d'organiser des défilés et des cérémonies, et de former efficacement les autres. ", 
+ 
+"Conditionnement physique et sports – Introduction" : " Ce cours présente aux cadets les principes essentiels de la condition physique et les saines habitudes de vie. Les cadets développent leur motivation personnelle, l'établissement d'objectifs et des compétences en conditionnement physique, favorisant ainsi leur bien-être et leur préparation physique. ", 
+ 
+"Instructeur de conditionnement physique et sports" : " Les cadets approfondissent leurs connaissances en matière d'évaluation de la condition physique, de programmation d'exercices et de promotion de la santé. Ce cours met l'accent sur le leadership, l'encadrement et les techniques de motivation, préparant les cadets à diriger des séances d'entraînement physique et à promouvoir la condition physique en équipe. ", 
+     
+"Musique militaire – Introduction" : " Les cadets développent des compétences musicales, notamment le maniement des instruments, la lecture de partitions et le jeu d'ensemble, ainsi que des connaissances en matière d'exercices militaires et de cérémonies. Ce cours renforce la discipline, le travail d'équipe et le leadership au sein d'une musique. ", 
+ 
+"Musique militaire – Musicien" : " En s'appuyant sur des compétences fondamentales, les cadets améliorent leurs compétences musicales, leur leadership et leur coordination de groupe. Ils se préparent à des rôles impliquant des performances, des instructions et des responsabilités de direction de fanfare. ", 
+ 
+"Corps de cornemuses – Introduction": " Les cadets acquièrent des compétences musicales de base, des techniques d'exercice et des connaissances cérémonielles pour les pipe bands, favorisant ainsi le travail d'équipe et le leadership applicables aux activités du groupe. ", 
+ 
+"Corps de cornemuses – Introduction" : " Les cadets perfectionnent leurs compétences avancées en matière de performance, de leadership et d'instruction au sein d'un corps de cornemuse. Ils se préparent à diriger et à enseigner au sein d'unités musicales tout en participant aux cérémonies. ", 
+ 
+" Cadet Reporteur " : " Les Cadets Reporteurs développent leurs compétences en journalisme et en production médiatique, notamment en rédaction, en photographie et en montage vidéo. Ils créent du contenu captivant qui favorise les activités des cadets, améliorant ainsi la communication, la narration, les compétences techniques en médias et le souci du détail. Ce rôle renforce le leadership, l'initiative et le travail d'équipe grâce à la collaboration avec les unités de cadets et le personnel. ", 
+         
+"Cadet-cadre (SCdt)" : " Le rôle de cadet-cadre est un poste de leadership et de mentorat où des cadets expérimentés soutiennent la mise en œuvre des programmes d'instruction d'été. Les cadets-cadres aident les instructeurs, supervisent les activités des cadets et assurent la sécurité et la discipline dans les centres d'instruction. Ils développent des compétences avancées en leadership, en enseignement et en organisation tout en servant de modèles aux cadets subalternes. Ce poste favorise le sens des responsabilités, le travail d'équipe et le professionnalisme, préparant ainsi les cadets à de futurs rôles de leadership au sein du Programme des cadets et au-delà. ", 
+ 
+"Conseil consultatif national des cadets (CCNC)" : " Le Conseil consultatif national des cadets offre une prestigieuse occasion de leadership où des cadets sélectionnés représentent leurs pairs à l’échelle nationale. Les membres du Conseil collaborent avec la haute direction pour formuler des commentaires, proposer des initiatives et influencer l’avenir du Programme des cadets. Grâce à des réunions, des présentations et des consultations, les cadets développent leurs compétences en réflexion stratégique, en communication et en défense des intérêts, jouant ainsi un rôle essentiel dans la création d’une expérience positive et inclusive pour les cadets partout au Canada. ", 
+"Stage en TI" : " Le stage en TI offre aux cadets l’occasion de soutenir les opérations numériques essentielles au sein des centres et des équipes d’instruction des cadets. En tant que coordonnateurs adjoints des TI au sein des CEC, les cadets acquièrent une expérience pratique de la configuration, de la maintenance et du dépannage des systèmes informatiques, notamment du matériel, des réseaux et des équipements de communication. Les cadets participent à la conception et au développement d’outils numériques à l’aide de plateformes low-code. Ils collaborent avec les parties prenantes pour identifier les besoins opérationnels, recueillir les exigences et contribuer à des solutions innovantes qui améliorent l’efficacité et la communication. Ce poste permet de développer les compétences techniques, la résolution de problèmes numériques, la gestion de projet et le travail d’équipe, tout en offrant une exposition aux stratégies de transformation numérique et aux technologies émergentes. ", 
+ 
+ 
+
+" Matelotage" : " Le cours de matelotage permet aux cadets d'acquérir leurs compétences de base en matière de matelotage par des activités avancées telles que le travail sur corde, le gréement, les tâches d'équipage dans les opérations maritimes, la navigation d'une journée sur un navire-école et la communication navale. Une fois réussis, les cadets obtiennent les qualifications en communications 1 et 2, qui attestent leur capacité à utiliser efficacement l'équipement et les protocoles de communication navale dans les opérations maritimes.", 
+"Opérateur d’embarcation légère"  : " Le cours d'opérateur d'embarcation de navire permet aux cadets d'acquérir des compétences avancées en matelotage grâce à la formation au Programme d'opérateur de petites embarcations (POP). Les activités comprennent le travail sur cordage, la navigation maritime, la communication visuelle navale et une excursion en mer de plusieurs jours. Les cadets qui réussissent obtiennent le POP 2, qui leur permet d'obtenir le Certificat restreint d'opérateur maritime (ROC(M)) avec mention d'appel sélectif numérique (ASN), leur permettant d'utiliser des radios marines ; le POP 3, qui les certifie pour la conduite de bateaux à moteur équipés de moteurs hors-bord ; et une qualification standard de premiers soins pour les interventions médicales d'urgence. ", 
+"Voile 1"  : " Le cours Voile 1 offre aux cadets la possibilité d'acquérir des compétences de base en navigation et de participer à la formation du Programme des conducteurs de petites embarcations (PCPE). Les cadets qui réussissent obtiennent les qualifications VoileCAN 1 et 2, qui certifient les compétences fondamentales en navigation, ainsi que la carte de conducteur d'embarcation de plaisance (CCEP) du module 1 du PCPE, un certificat obligatoire pour la conduite d'embarcations de plaisance dans les eaux canadiennes. ", 
+"Voile 2" : " Le cours Voile 2 permet aux cadets de perfectionner leurs compétences en navigation grâce à des compétences et une formation plus complexes. Les participants qui réussissent obtiennent les qualifications CANSail 3 et 4, démontrant une maîtrise intermédiaire de la voile, une certification en premiers soins pour les interventions médicales d'urgence et une certification SCOP Module 3, leur permettant de conduire des bateaux à moteur en toute sécurité. ", 
+"Voile 3": " Le cours Voile 3 offre aux cadets l'occasion d'améliorer leurs compétences en voile et de se qualifier comme instructeurs de voile. Les cadets qui réussissent obtiennent les qualifications VoileCAN 5 et 6, démontrant une maîtrise avancée de la voile, la certification SCOP Module 4 pour les opérations de sauvetage en bateau à moteur, la réussite du cours de formation fondamentale de Voile Canada, la certification Instructeur de Clinique et la formation Sport sécuritaire, ce qui leur permet d'enseigner la voile de manière sécuritaire et efficace. ", 
+
+   
+ "Chef d'équipe d'expédition" : " Le cours de chef d'équipe d'expédition forme les cadets à planifier, diriger et gérer des expéditions en plein air. Les participants développent des compétences en navigation, en gestion des risques, en leadership de groupe et en intervention d'urgence. Les candidats retenus obtiennent des qualifications démontrant leur capacité à organiser et à diriger des équipes en toute sécurité dans des environnements sauvages difficiles. ", 
+" Membre d'équipe d'expédition  " : "Ce cours prépare les cadets à participer efficacement à des expéditions en plein air en développant des compétences en travail d'équipe, en navigation, en survie et en endurance physique. Les cadets apprennent à être des membres d'équipe et à contribuer au succès et à la sécurité des activités de plein air de groupe, en obtenant une qualification qui reflète leur capacité en tant que membres fiables de l'expédition.  ", 
+"Instructeur de vélo de montagne": " Le cours d'instructeur de vélo de montagne permet aux cadets d'acquérir les connaissances et les compétences nécessaires pour enseigner les techniques de VDM, la sécurité sur les sentiers et l'entretien des vélos. Les cadets apprennent des méthodes pédagogiques pour former les autres, promouvoir une conduite sûre et confiante sur des terrains variés, et obtiennent une qualification certifiant leur capacité à diriger des séances de formation en VDM. ", 
+"Parachutiste de niveau élémentaire" : " Le cours de Parachutiste de niveau élémentaire offre aux participants la possibilité d'acquérir les compétences et les connaissances essentielles pour devenir parachutiste de base. Les personnes sélectionnées pour ce cours participent à un entraînement physique exigeant dans des endroits éloignés et à haute altitude. Après avoir réussi ce cours, les participants obtiennent la qualification de parachutiste de base des Forces canadiennes, démontrant ainsi leur capacité à effectuer des opérations de parachutisme militaire en toute sécurité. ", 
+
+    
+" Technologie de l'aviation et aérospatiale " : " Ce cours présente aux cadets les concepts fondamentaux de l'ingénierie aérospatiale, notamment les principes du vol, la conception des aéronefs, les systèmes de propulsion et l'aérodynamique de base. Les cadets étudient également les opérations aéroportuaires et les principes fondamentaux du droit aérien, tels que la réglementation régissant l'espace aérien et les opérations aériennes. Ce cours développe des compétences techniques en résolution de problèmes, en analyse de systèmes et en compréhension des processus de maintenance pertinents pour l'ingénierie aérospatiale et les opérations aériennes. ", 
+ 
+"Cours d'aviation avancé" : "Les cadets acquièrent des connaissances spécialisées en systèmes de communication aéronautique, en météorologie et en techniques d'instruction. La formation met l'accent sur les procédures opérationnelles aéronautiques, les principes de gestion du trafic aérien et les compétences en leadership nécessaires à la coordination des activités aéronautiques. Ce cours prépare les cadets à diriger efficacement des équipes aéronautiques et à instruire leurs pairs sur des sujets aéronautiques complexes.", 
+ "Cours de formation de planeur": "Un programme intensif de formation au pilotage axé sur la théorie et la pratique du vol sans moteur. Les cadets apprennent l'aérodynamique du planeur, les commandes de vol, la navigation, l'évaluation météorologique, les procédures d'urgence et les exigences réglementaires. La réussite du cours permet d'obtenir la licence de pilote de planeur de Transports Canada, certifiant l'autonomie du vol et améliorant la compréhension pratique de la dynamique de vol et du droit aérien.",
+ "Cours de formation de pilote d'avion": " Formation complète en vol motorisé couvrant les systèmes d'aéronef, la planification de vol, la navigation, la météorologie et les protocoles d'urgence. Les cadets acquièrent une expérience pratique du pilotage et étudient en profondeur la réglementation et le droit aérien. Les diplômés obtiennent la licence de pilote d'aéronef motorisé de Transports Canada, ce qui les qualifie pour le pilotage en solo d'aéronefs motorisés et leur permet d'approfondir leurs connaissances opérationnelles en matière de sécurité et de gestion de l'aviation. ", 
+ "Survie – Introduction" : " Les cadets acquièrent des compétences de survie essentielles adaptées aux équipages, notamment la navigation, la préparation aux situations d'urgence et les techniques de survie en milieu sauvage. Le cours met l'accent sur la connaissance de la situation, l'évaluation des risques et la prise de décision, essentielles à la sécurité des équipages en cas d'imprévu. ", 
+ 
+"Instructeur en survie" : " Ce cours avancé prépare les cadets à enseigner et à diriger des programmes d'entraînement à la survie. Les participants approfondissent leur expertise en tactiques de survie, navigation à la carte et à la boussole, exercices en équipe et en solo, et développent des méthodes d'enseignement efficaces. Les diplômés sont équipés pour former d'autres équipages aux techniques de survie, contribuant ainsi à la préparation opérationnelle et à la sécurité. ", 
+
+
+"Chef d'équipe Cyber Sûreté et Sécurité" : "Ce cours permet aux cadets d'acquérir les compétences techniques et de leadership nécessaires pour soutenir la sensibilisation et les opérations en cybersécurité au sein de leur unité. Les cadets apprennent à identifier les fonctionnalités de sécurité des systèmes Windows et Linux, à adopter un comportement numérique éthique et à participer à une simulation de compétition en cybersécurité. Grâce à la collaboration avec des experts en cybersécurité des Forces armées canadiennes, les cadets acquièrent de l'expérience en gestion des risques numériques et en protocoles de sécurité de l'information. La réussite du cours donne droit à une certification de chef en cybersécurité, démontrant ainsi leur capacité à diriger une formation en cybersécurité et à promouvoir des habitudes en ligne sécuritaires au sein de la communauté des cadets.", 
+ 
+"Chef d'équipe des services de soutien" : " Les cadets se familiarisent avec les fonctions administratives et logistiques qui soutiennent les opérations de l'unité, notamment la gestion de la chaîne d'approvisionnement, la gestion des documents, le contrôle des stocks et la confidentialité des données. Le cours met l'accent sur le leadership en coulisses, l'efficacité organisationnelle et la résolution de problèmes administratifs. Les cadets acquièrent des compétences en documentation numérique, en travail d'équipe, en responsabilisation et en gestion du temps. La certification SIMDUT, qui atteste des connaissances en manutention sécuritaire du matériel en milieu de travail et d'approvisionnement, est obtenue. ", 
+ 
+" Patron d'embarcation légère " : " Les cadets acquièrent des compétences en conduite de petits navires, en interprétation des règles de navigation maritime et en communication sur l'eau à l'aide de signaux de détresse et des procédures du Service mobile maritime. Le cours met l'accent sur la formation pratique en manœuvres de navires, en procédures de sécurité et en préparation aux situations d'urgence. Les cadets qui réussissent le cours obtiennent la certification SCOP Module 1 (carte de conducteur d'embarcation de plaisance de Transports Canada) et la certification SCOP Module 2 (certificat restreint d'opérateur radio - maritime), ce qui les qualifie pour conduire en toute sécurité des embarcations de plaisance et communiquer à l'aide d'équipement radio maritime. ", 
+ 
+"Opérateur de microdrone élémentaire" : "Ce cours présente aux cadets l'utilisation des microdrones et la réglementation canadienne sur les véhicules aériens sans pilote (UAV). Les cadets apprennent la sécurité de l'espace aérien, la planification de mission, les procédures d'urgence et les applications des drones au sein des Forces armées canadiennes. La formation comprend la préparation au certificat de pilote – Opérations de base de Transports Canada et au certificat restreint d'opérateur aéronautique, qui confèrent des qualifications reconnues à l'échelle nationale pour l'utilisation des drones et de la radio aéronautique. Le cours développe la conscience spatiale, le sens des responsabilités et les compétences techniques dans les systèmes aériens à distance.", 
+ 
+"Quête Nova" : "Les cadets explorent l'histoire de l'aérospatiale canadienne, le développement des technologies spatiales et l'avenir des voyages spatiaux. Les activités simulent la vie dans l'espace et couvrent les techniques de survie, les systèmes de communication et la navigation extraterrestre. Les cadets analysent les corps célestes, se familiarisent avec les missions spatiales et participent à la résolution de problèmes technologiques. Le cours cultive la curiosité, la pensée scientifique, l'adaptabilité et le travail d'équipe dans le contexte de l'industrie aérospatiale canadienne en pleine croissance.", 
+ 
+" Programmeur élémentaire"  : " Ce cours initie les cadets aux fondamentaux de la programmation et de la résolution de problèmes numériques. Les cadets utilisent des outils de codage visuel par blocs, comme Minecraft et des robots en réalité virtuelle, pour développer leur logique, leur créativité et leur pensée structurée. Ils participent également à des compétitions de sports électroniques et discutent avec le personnel des Forces armées canadiennes des carrières en cybersécurité et en technologie. Le cours renforce la littératie numérique, la collaboration, l'innovation et la pensée systémique, des compétences essentielles dans les environnements technologiques civils et militaires. ", 
+
+  
+
+      },
+      qualifications: {
+     "Premiers secours d'urgence" : " Certifie les cadets dans les procédures de sauvetage de base, y compris la RCR, l'utilisation du DEA et l'intervention d'urgence dans les situations mettant la vie en danger. Les cadets font preuve d'une conscience de la situation, d'une prise de décision sous pression et d'une responsabilité personnelle en situation de crise.  ", 
+"Premiers secours standard" : " Une certification avancée qui comprend des soins pour les saignements, les brûlures, les fractures et les urgences environnementales en plus de l'utilisation de la RCR et du DEA. Les cadets démontrent des compétences en triage médical, en communication en cas d'urgence et en leadership en situation de stress. ", 
+"Familiarisation avec le pilote de planeur" : " Les cadets pilotes sont certifiés pour effectuer des vols de familiarisation avec les cadets sur la banquette arrière de l'aéronef. Ils font preuve d'un savoir-faire aéronautique et d'une sécurité avancés tout en renforçant la confiance, la conscience technique et le travail d'équipe.  ", 
+" Familiarisation avec le siège arrière du pilote de planeur " : " Cette qualification permet aux cadets pilotes d'effectuer des vols de familiarisation avec les cadets dans le siège avant du planeur, ce qui améliore leur compréhension des opérations aériennes, leur connaissance de la situation et leur communication avec les passagers. ", 
+" Tireur d'élite " : " Décerné pour avoir satisfait aux normes de tir à la carabine à air comprimé au niveau de base. Les cadets font preuve d'une visée précise, d'une position de tir stable et de procédures de sécurité du champ de tir, d'une concentration accrue, d'une responsabilité et d'un souci du détail.  ", 
+" Tireur d'élite de première classe " : " Reconnaît l'augmentation de la précision et de la discipline au tir. Les cadets perfectionnent les techniques de respiration, la constance de la cible et l'autodiscipline pendant de longues séances de tir. ", 
+" Tireur d'élite expert " : " Décerné pour le regroupement de haute performance et la constance des tirs. Les cadets font preuve d'une concentration de niveau expert, d'un contrôle musculaire et d'une stabilité psychologique sous pression.  ", 
+" Tirer d'élite distingué" : " Le plus haut niveau de tir à la carabine à air comprimé. Les cadets font preuve d'une précision, d'une concentration et d'une adhésion sans faille à la sécurité et à la technique lors de multiples évaluations. ", 
+" Qualification musicale de base " : "Les cadets démontrent des habiletés de base en matière d'écoute, de coordination et d'interprétation, ainsi que la façon de faire partie d'une musique militaire. ", 
+"Niveau 1 en musique" : " Les cadets démontrent une maîtrise musicale précoce et une intégration harmonieuse dans l'ensemble. Ils gagnent en confiance, en timing et en coopération lors des performances de groupe. ", 
+"Niveau 2 en musique" : " Les cadets interprètent des musiques plus complexes, lisent des notations avancées et jouent avec une précision accrue. Ils développent leur leadership et leur capacité à communiquer au sein des sections musicales. ", 
+"Niveau 3 en musique" : " Démontre des aptitudes d'interprétation et une technique musicale intermédiaires. Les cadets commencent à encadrer leurs pairs et à assumer des responsabilités de direction de section. ", 
+"Niveau 4 en musique" : " Les cadets font preuve d'une excellente interprétation musicale, d'endurance et d'un leadership d'ensemble. Ce niveau exige une capacité à résoudre des problèmes en dynamique de groupe et une compréhension approfondie de la structure musicale. ", 
+"Niveau 5 en musique" : " Représente la maîtrise de l'interprétation, de la technique et du leadership musical. Les cadets dirigent des sections ou des ensembles complets, dirigent les répétitions et font preuve de professionnalisme et de précision. ", 
+" Bronze en condition physique " : " Décerné pour avoir atteint les normes de condition physique de base. Les cadets développent des aptitudes physiques fondamentales, des habitudes d'établissement d'objectifs et une responsabilité personnelle. ", 
+" Argent en condition physique " : " Reconnaît les performances intermédiaires en force et en cardio. Les cadets développent leur endurance, leur motivation et leur résilience grâce à des programmes d'entraînement structurés. ", 
+" Or en condition physique " : " Décerné aux cadets qui affichent une amélioration constante et une excellente condition physique générale. Ils font preuve d'autodiscipline et inspirent les autres à relever des défis physiques. ", 
+" Excellence en condition physique " : " La plus haute distinction en condition physique pour les cadets, exigeant des performances exceptionnelles dans toutes les catégories de tests. Les cadets font preuve de persévérance, de leadership en milieu de conditionnement physique et d'excellence en matière de bien-être physique. ", 
+"Module 1 du SCOP– Carte de conducteur d'embarcation de plaisance (CCEP) ": " Certifie les cadets ayant suivi le cours obligatoire de sécurité nautique de Transports Canada. Les sujets abordés comprennent la réglementation, les feux de navigation, les systèmes de bouées et les procédures d'urgence. Les cadets acquièrent des habitudes de navigation sécuritaires, des connaissances réglementaires et une préparation aux situations d'urgence sur l'eau. ", 
+"Module 2 du SCOP – Certificat restreint d'opérateur (maritime)": " Confère aux cadets l'autorisation légale d'utiliser des radios maritimes. La formation couvre l'utilisation de la VHF, les protocoles ASN, les signaux d'urgence et les communications de détresse. Cette qualification favorise la précision, le calme en cas d'urgence et la maîtrise technique des radios. ", 
+"Module 3 SCOP – Conducteur de bateau à moteur" : " Ce module met l'accent sur les opérations pratiques des bateaux à moteur, notamment la navigation, l'accostage et la gestion du moteur. Les cadets apprennent la planification d'itinéraire, la consommation de carburant et le dépannage mécanique, ce qui leur permet d'acquérir autonomie et responsabilité dans la conduite de l'embarcation. ", 
+"Module 4 du SCOP – Sécurité et opérations des embarcations de sauvetage" : " Prépare les cadets aux procédures de sauvetage, notamment la récupération d'un homme à la mer, le remorquage d'un navire et la coordination des recherches. Les cadets développent une prise de décision rapide, le travail d'équipe en situation de stress et des techniques avancées de sécurité maritime. ", 
+"CANSail 1" : " Initie les cadets aux bases de la voile, notamment la conduite du bateau, la sécurité, le réglage des voiles et la terminologie. Les cadets développent leur coordination physique, leur conscience environnementale et leur capacité à résoudre des problèmes de niveau débutant sur l'eau. ", 
+"CANSail 2" : " S'appuie sur le niveau 1 avec un meilleur contrôle des voiles, des virements de bord et des empannages de base, ainsi que des règles de priorité. Les cadets gagnent en confiance, en régularité et en adaptabilité face à des conditions météorologiques imprévisibles. ", 
+" CANSail 3 " : " Cours de voile intermédiaire mettant l'accent sur l'efficacité et la technique. Les cadets apprennent les manœuvres avancées, l'évaluation des risques et commencent à diriger des activités de voile en petits groupes, améliorant ainsi leur esprit d'analyse et leur sens des responsabilités. ", 
+"VoileCAN 4" : " Les cadets perfectionnent leurs compétences en voile grâce à un entraînement axé sur la course, l'optimisation du vent et la navigation tactique. Ce cours encourage la prise de décision critique, l'auto-évaluation et la capacité d'enseignement dans des délais serrés. ", 
+" CANSail 5 " : " Navigation de niveau avancé qui présente l'utilisation du spinnaker, les techniques par gros temps et la stratégie d'équipe. Les cadets gèrent la coordination de l'équipage et prennent le leadership dans les opérations du bateau dans des conditions difficiles. ", 
+"Voile CAN 6" : " Maîtrise de la voile technique, incluant des tactiques avancées, l'optimisation de la vitesse et la coordination entre plusieurs équipages. Les cadets acquièrent des compétences d'encadrement, perfectionnent leur leadership en voile et pratiquent des stratégies de navigation compétitives. ", 
+"Instructeur de voile" : " Les cadets sont certifiés pour enseigner la voile sous l'égide de Voile Canada. Cela comprend la planification des cours, la sécurité des élèves et la prestation des cours. Cela renforce les techniques d'enseignement, l'art oratoire et les compétences de mentorat dans un environnement sportif technique. ", 
+"Conducteur de bateau à moteur" : " Cette qualification reconnue par Transports Canada permet aux cadets de conduire en toute sécurité une petite embarcation à moteur. La formation comprend les manœuvres, l'accostage, l'ancrage, les interventions d'urgence et les exigences légales en matière de navigation. Les cadets développent les compétences techniques en matelotage, la prise de décision en milieu dynamique et la responsabilité de la sécurité de l'équipage et du respect du droit maritime. ", 
+"Conducteur de bateau de sécurité" : " Cette qualification met l'accent sur la préparation au sauvetage et les fonctions d'escorte sécuritaires lors des activités nautiques des cadets. Les cadets apprennent les procédures d'urgence, la conduite du bateau en situation de stress et la coordination avec les équipes de sécurité. Le cours renforce le jugement, la gestion des risques et la capacité à garder son calme lors d'incidents à forte pression. ", 
+" Timonier de bateau de mer " : " Les cadets dirigent l'équipage d'une petite embarcation pour la navigation, la communication et les opérations en mer. Ce rôle exige des compétences avancées en matelotage, du leadership et la capacité de diriger le personnel dans des conditions maritimes changeantes. Les cadets perfectionnent leur coordination, leur communication affirmée et leur leadership sur l'eau lors d'opérations en temps réel. ", 
+"Qualification en plongée sous-marine" : " Initie les cadets aux techniques de base de la plongée sous-marine et à la sécurité de l'équipement. Les cadets développent la navigation sous-marine, la conscience de la pression, la communication entre pairs et le respect de l'environnement grâce à une formation pratique avec des instructeurs certifiés. ", 
+" Communicateur niveau 1 " : " Forme les cadets aux protocoles de communication de base, y compris les procédures vocales et l'initiation au fonctionnement de la radio. Les cadets développent la clarté, la concision et le souci du détail. ", 
+" Communicateur niveau 2 " : " Les cadets apprennent des techniques de communication plus avancées, notamment le code Morse et l'enregistrement de messages. Ce niveau améliore la précision, la concentration et l'utilisation technique de la radio. ", 
+" Communicateur niveau 3 " : " Certification de communicateur de haut niveau où les cadets évoluent dans des environnements de commandement simulés. Ils font preuve de leadership dans des situations de communication et enseignent à leurs pairs le protocole approprié. ", 
+
+
+      },
+      prix: {
+"Prix de bravoure des cadets" : " Décerné aux cadets qui font preuve d'un courage extraordinaire en risquant leur vie pour sauver des vies ou protéger des biens. Ce prix récompense la vivacité d'esprit et les actes héroïques accomplis dans des circonstances mettant la vie en danger, dépassant les attentes en matière de sécurité personnelle et de devoir.", 
+"Médaille Lord Strathcona" : " La plus haute distinction pour l'excellence physique et militaire du Programme des cadets. Elle récompense les cadets qui font constamment preuve d'un leadership exemplaire, de discipline, d'une bonne condition physique et d'un dévouement exemplaire aux idéaux de la formation des cadets. Les lauréats établissent la norme au sein de leur corps ou escadron. ", 
+"Médaille d'excellence des cadets de la Légion royale canadienne" : " Décernée aux cadets qui font preuve d'un civisme, d'un leadership et d'un service communautaire exceptionnels. Les récipiendaires doivent avoir suivi toute la formation obligatoire et participé à plusieurs activités de service communautaire. Cette médaille souligne le sens civique et la coopération au sein de l'unité de cadets et au-delà. ", 
+"Médaille d'excellence de la Ligue navale du Canada" : " Décernée chaque année au meilleur cadet de la Marine de chaque corps. Elle souligne l'excellence de la performance, du leadership, de l'engagement communautaire et de l'adhésion aux valeurs du programme des cadets de la Marine. Les lauréats servent de modèles tant dans le service maritime que dans leur conduite. ", 
+"Cadet de la Marine divisionnaire de l'année " : " Décerné à un cadet de la Marine par division au Canada pour son leadership, son civisme et son dévouement exceptionnels. Sélectionnés par voie de nominations régionales et d'entrevues, les lauréats démontrent un impact positif au sein de leur unité et agissent à titre d'ambassadeurs du programme des cadets de la Marine. ", 
+"Cadet de la Marine national de l'année" : " La distinction la plus prestigieuse des cadets de la Marine au Canada. Sélectionné parmi les lauréats divisionnaires, ce prix récompense le cadet qui incarne le mieux les valeurs fondamentales du programme par son leadership, son service et son engagement public à l'échelle nationale. ", 
+"Prix Major-général W.A. Howard" : " Décerné au meilleur cadet de l'Armée de chaque province. Il récompense les cadets qui font preuve d'excellence en leadership, en entraînement, en service communautaire et en performance globale. Nommé en l'honneur d'un ancien chef des réserves et des cadets, il reflète le plus haut niveau provincial chez les cadets de l'Armée. ", 
+"Médaille de l'Association de l'ARC" : "Décernée au meilleur cadet diplômé des cours de pilotage de planeur ou d'avion. Parrainée par l'Association de l'Aviation royale canadienne, elle souligne l'excellence du leadership, des compétences de vol et des contributions au programme d'aviation durant l'entraînement d'été.", 
+"Médaille du mérite des cadets ANAVETS" : "Décernée aux meilleurs cadets des cours de niveau instructeur, tels que les cours d'exercice et de cérémonie, de survie, de conditionnement physique et de sport, de tir et d'autres cours élémentaires, la démonstration d'une habileté de construction impeccable et la performance globale du cours. Parrainé par les vétérans de l'Armée, de la Marine et de la Force aérienne au Canada.", 
+"Médaille de l'Ordre de Saint-Georges" : " Décernée aux cadets qui font preuve d'excellence soutenue en matière de leadership, de service et d'engagement envers le mouvement des cadets pendant l'instruction estivale. Reconnaît l'honneur, le devoir et l'intégrité personnelle. Souvent présenté lors d'événements nationaux ou de rôles de leadership dans des activités de cadets à grande échelle. ", 
+"Médailles de service des cadets de la Marine, de l'Armée et de l'Air" : "Décernées aux cadets après quatre années de service honorable au sein du programme. Des barrettes supplémentaires récompensent chaque année subséquente. Elles symbolisent le dévouement, la loyauté et la persévérance du cadet tout au long de sa participation au programme.", 
+"Prix d'excellence jeunesse de la Compagnie Canada" : " Ce prix récompense les cadets qui font preuve d'un équilibre entre l'excellence scolaire, le leadership et le service communautaire. Les lauréats font preuve d'initiative, d'engagement civique et d'intégrité personnelle. Sélectionnés à l'échelle nationale, ils servent d'ambassadeurs de la réussite des jeunes partout au Canada. ", 
+"Prix international du Duc d'Édimbourg" : " Un programme international de développement personnel où les cadets atteignent les niveaux Bronze, Argent ou Or grâce au bénévolat, à l'activité physique, au développement des compétences et à des voyages aventureux. Il encourage la résilience, l'initiative et le leadership par des défis de développement personnel. ", 
+"Mention élogieuse de commandement" : " Décernée par le commandant de la formation à des personnes ou à des groupes pour un leadership, un service ou une innovation exceptionnels. Reconnaît les contributions qui améliorent l'instruction, améliorent le moral ou résolvent des problèmes au-delà de la portée du service régulier. " ,
+
+      }
+    };
+
+    function generatePDF() {
+      const doc = new jsPDF();
+      const nom = document.getElementById("nom").value;
+      const grades = Array.from(document.getElementById("grades").selectedOptions).map(o => o.value);
+      const cours = Array.from(document.getElementById("cours").selectedOptions).map(o => o.value);
+      const qualifications = Array.from(document.getElementById("qualifications").selectedOptions).map(o => o.value);
+      const prix = Array.from(document.getElementById("prix").selectedOptions).map(o => o.value);
+
+      let y = 10;
+      doc.setFontSize(14);
+      doc.text(`Cadet2Career Resume Summary`, 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      doc.text(`Nom: ${nom}`, 10, y);
+      y += 10;
+
+      function addSection(title, items, category) {
+        if (items.length > 0) {
+          doc.setFont(undefined, "bold");
+          doc.text(`${title}:`, 10, y);
+          y += 8;
+          doc.setFont(undefined, "normal");
+          items.forEach(item => {
+            const text = `${item}: ${data[category][item]}`;
+            const lines = doc.splitTextToSize(text, 180);
+            if (y + lines.length * 7 > 280) {
+              doc.addPage();
+              y = 10;
+            }
+            doc.text(lines, 10, y);
+            y += lines.length * 7 + 3;
+          });
+        }
+      }
+
+      addSection("Grades", grades, "grades");
+      addSection("Cours", cours, "cours");
+      addSection("Qualifications", qualifications, "qualifications");
+      addSection("Prix", prix, "prix");
+
+      doc.save("Cadet2Career_Resume.pdf");
+    }
+
+    function populateDropdown(id, options) {
+      const select = document.getElementById(id);
+      for (const key in options) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = key;
+        select.appendChild(opt);
+      }
+    }
+
+    populateDropdown("Grades", data.grades);
+    populateDropdown("cours", data.cours);
+    populateDropdown("qualifications", data.qualifications);
+    populateDropdown("prix", data.prix);
+  </script>
+</body>
+</html>
