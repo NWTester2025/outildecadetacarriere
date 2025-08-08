@@ -194,7 +194,7 @@
     function generatePDF() {
       const doc = new jsPDF();
       const nom = document.getElementById("nom").value;
-      const grades = Array.from(document.getElementById("grades").selectedOptions).map(o => o.value);
+     const grades = Array.from(document.getElementById("Grades").selectedOptions).map(o => o.value);
       const cours = Array.from(document.getElementById("cours").selectedOptions).map(o => o.value);
       const qualifications = Array.from(document.getElementById("qualifications").selectedOptions).map(o => o.value);
       const prix = Array.from(document.getElementById("prix").selectedOptions).map(o => o.value);
